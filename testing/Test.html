@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score Calculator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .grade {
+            font-weight: bold;
+        }
+        .pass {
+            color: green;
+        }
+        .fail {
+            color: red;
+        }
+        .invalid-feedback {
+            display: none;
+        }
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center"><span style="color: #FF5733;">គណនាពិន្ទុប្រលងបាក់ឌុប ថ្នាក់វិទ្យាសាស្ត្រសង្គម</span></h1>
+        <form id="scoreForm">
+            <div class="form-group">
+                <label for="khmerScore">Khmer Subject Score (125):</label>
+                <input type="number" class="form-control" id="khmerScore" min="0" max="125" required>
+                <div class="invalid-feedback">Score must be between 0 and 125.</div>
+            </div>
+            <div class="form-group">
+                <label for="mathScore">Math Subject Score (75):</label>
+                <input type="number" class="form-control" id="mathScore" min="0" max="75" required>
+                <div class="invalid-feedback">Score must be between 0 and 75.</div>
+            </div>
+            <div class="form-group">
+                <label for="geoScore">Geo Subject Score (75):</label>
+                <input type="number" class="form-control" id="geoScore" min="0" max="75" required>
+                <div class="invalid-feedback">Score must be between 0 and 75.</div>
+            </div>
+            <div class="form-group">
+                <label for="histoScore">Histo Subject Score (75):</label>
+                <input type="number" class="form-control" id="histoScore" min="0" max="75" required>
+                <div class="invalid-feedback">Score must be between 0 and 75.</div>
+            </div>
+            <div class="form-group">
+                <label for="moralScore">Moral Subject Score (75):</label>
+                <input type="number" class="form-control" id="moralScore" min="0" max="75" required>
+                <div class="invalid-feedback">Score must be between 0 and 75.</div>
+            </div>
+            <div class="form-group">
+                <label for="earthScore">Earth Subject Score (50):</label>
+                <input type="number" class="form-control" id="earthScore" min="0" max="50" required>
+                <div class="invalid-feedback">Score must be between 0 and 50.</div>
+            </div>
+            <div class="form-group">
+                <label for="englishScore">English Subject Score (50):</label>
+                <input type="number" class="form-control" id="englishScore" min="0" max="50" required>
+                <div class="invalid-feedback">Score must be between 0 and 50.</div>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="calculateGrades()">Calculate</button>
+            <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+        </form>
+        <div class="result">
+            <h2>Results</h2>
+            <div id="subjectGrades"></div>
+            <div id="overallGrade"></div>
+        </div>
+    </div>
+
+    <!-- Bootstrap and jQuery JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function getGrade(score, maxScore, thresholds) {
+            let percentage = (score / maxScore) * 100;
+            if (percentage >= thresholds.A) return 'Grade A';
+            if (percentage >= thresholds.B) return 'Grade B';
+            if (percentage >= thresholds.C) return 'Grade C';
+            if (percentage >= thresholds.D) return 'Grade D';
+            return 'Grade E';
+        }
+
+        function validateInputs() {
+            let isValid = true;
+            const fields = [
+                { id: 'khmerScore', max: 125 },
+                { id: 'mathScore', max: 75 },
+                { id: 'geoScore', max: 75 },
+                { id: 'histoScore', max: 75 },
+                { id: 'moralScore', max: 75 },
+                { id: 'earthScore', max: 50 },
+                { id: 'englishScore', max: 50 }
+            ];
+
+            fields.forEach(field => {
+                let input = document.getElementById(field.id);
+                let value = parseInt(input.value);
+                if (value < 0 || value > field.max) {
+                    input.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            return isValid;
+        }
+
+        function calculateGrades() {
+            if (!validateInputs()) {
+                return;
+            }
+
+            let subjects = {
+                'Khmer': { score: parseInt(document.getElementById('khmerScore').value), maxScore: 125, thresholds: { A: 89.6, B: 80, C: 69.6, D: 60 } },
+                'Math': { score: parseInt(document.getElementById('mathScore').value), maxScore: 75, thresholds: { A: 89.6, B: 80, C: 69.6, D: 49.6 } },
+                'Geo': { score: parseInt(document.getElementById('geoScore').value), maxScore: 75, thresholds: { A: 89.6, B: 80, C: 69.6, D: 49.6 } },
+                'Histo': { score: parseInt(document.getElementById('histoScore').value), maxScore: 75, thresholds: { A: 89.6, B: 80, C: 69.6, D: 49.6 } },
+                'Moral': { score: parseInt(document.getElementById('moralScore').value), maxScore: 75, thresholds: { A: 89.6, B: 80, C: 69.6, D: 49.6 } },
+                'Earth': { score: parseInt(document.getElementById('earthScore').value), maxScore: 50, thresholds: { A: 90, B: 80, C: 70, D: 60 } },
+                'English': { score: parseInt(document.getElementById('englishScore').value), maxScore: 50, thresholds: { A: 90, B: 80, C: 70, D: 60 } }
+            };
+
+            let totalScore = 0;
+            let totalMaxScore = 0;
+            let subjectGradesHtml = '';
+
+            for (let subject in subjects) {
+                let subjectData = subjects[subject];
+                let grade = getGrade(subjectData.score, subjectData.maxScore, subjectData.thresholds);
+                subjectGradesHtml += `<p>${subject} Subject: ${grade}</p>`;
+                totalScore += subjectData.score;
+                totalMaxScore += subjectData.maxScore;
+            }
+
+            let overallGrade;
+            if (totalScore < 237) overallGrade = 'Fail';
+            else if (totalScore < 285) overallGrade = 'Grade E';
+            else if (totalScore < 332) overallGrade = 'Grade D';
+            else if (totalScore < 380) overallGrade = 'Grade C';
+            else if (totalScore < 427) overallGrade = 'Grade B';
+            else overallGrade = 'Grade A';
+
+            let resultClass = totalScore < 237 ? 'fail' : 'pass';
+
+            document.getElementById('subjectGrades').innerHTML = subjectGradesHtml;
+            document.getElementById('overallGrade').innerHTML = `<h3>Total Score: ${totalScore} / ${totalMaxScore}</h3><h4 class="grade ${resultClass}">Overall Performance: ${overallGrade}</h4>`;
+        }
+
+        function resetForm() {
+            document.getElementById('scoreForm').reset();
+            document.getElementById('subjectGrades').innerHTML = '';
+            document.getElementById('overallGrade').innerHTML = '';
+            // Clear any validation error messages
+            let inputs = document.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.classList.remove('is-invalid');
+            });
+        }
+    </script>
+</body>
+</html>
